@@ -33,6 +33,7 @@ private slots:
     void on_btn_move_clicked();
     void on_btn_delete_clicked();
     void on_info_btn_clicked();
+    void on_src_sradioButton_released();
 
 private:
     Ui::MainWindow *ui;

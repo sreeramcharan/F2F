@@ -3,5 +3,6 @@
         <file>images/Fileicon.png</file>
         <file>images/Foldericon.png</file>
         <file>images/info_icon.png</file>
+        <file>images/Fileicon_ok.png</file>
     </qresource>
 </RCC>

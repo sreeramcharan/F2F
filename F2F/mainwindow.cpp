@@ -64,7 +64,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableWidget->verticalHeader()->hide();
     ui->tableWidget->setShowGrid(false);
 
-
+    ui->tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
 /*
  *  Destination side TableWiget settings
  *
@@ -75,6 +75,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->dest_tableWidget->horizontalHeader()->setResizeMode(0,QHeaderView::Stretch);
     ui->dest_tableWidget->verticalHeader()->hide();
     ui->dest_tableWidget->setShowGrid(false);
+
+    ui->dest_tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
 #if 0
 //    ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
 
@@ -104,6 +106,16 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     Update_Drive_Size(Src_Path,ui->Foldersize_label);
     Update_Drive_Size(Src_Path,ui->Foldersize_label1);
+
+   // connect(ui->src_sradioButton,SIGNAL(released()),this,SLOT(this->on_radio_button_released));
+    connect(ui->src_mradioButton,SIGNAL(released()),this,SLOT(on_src_sradioButton_released()));
+    connect(ui->dest_sradioButton,SIGNAL(released()),this,SLOT(on_src_sradioButton_released()));
+    connect(ui->dest_mradioButton,SIGNAL(released()),this,SLOT(on_src_sradioButton_released()));
+
+    ui->src_mradioButton->setEnabled(true);
+    ui->src_sradioButton->setEnabled(true);
+    ui->dest_mradioButton->setEnabled(false);
+    ui->dest_sradioButton->setEnabled(false);
 
   //  ui->dest_tableWidget->setDisabled(true);
   //  ui->dest_tableWidget->clearSelection();
@@ -139,7 +151,7 @@ void MainWindow::Refresh(const QString &fPath, QTableWidget *table_widget, QDir 
 
     //QString path = str;//ui->comboBox->currentText();
     Directory->setPath(fPath);
-    //Directory->setFilter(QDir::NoDotAndDotDot|QDir::NoSymLinks);
+    Directory->setFilter(QDir::NoDotAndDotDot|QDir::NoSymLinks);
     QFileInfoList filelist = Directory->entryInfoList(QDir::Dirs|QDir::Files|QDir::NoDotAndDotDot|QDir::NoSymLinks);
 
     for(int i=0;i<filelist.size();i++)
@@ -171,6 +183,8 @@ void MainWindow::Refresh(const QString &fPath, QTableWidget *table_widget, QDir 
             QTableWidgetItem *fileNameItem = new QTableWidgetItem(fileinfo.fileName());
             fileNameItem->setFlags(fileNameItem->flags() ^ Qt::ItemIsEditable);
             fileNameItem->setIcon(QIcon(":/images/images/Fileicon.png"));
+
+            // fileNameItem->setIcon(QIcon(":/images/images/Fileicon_ok.png"));
 
             //fileNameItem->setIcon(QIcon("/home/sreeram/learn/qt/GUI_v1/Fileicon.png"));
             /*QTableWidgetItem *sizeItem = new QTableWidgetItem(tr("%1 KB").arg(int((size + 1023) / 1024)));
@@ -310,8 +324,16 @@ QString Source_FilePath="";
 void MainWindow::on_tableWidget_clicked(const QModelIndex &index)
 {
    // QDir  *local_dir = new QDir(currentDir);
+
+    if(ui->src_mradioButton->isChecked())
+    {
+        qDebug("Multiple files selected");
+        return;
+    }
+
     qDebug() << "Clicked from source";
     QString str = ui->tableWidget->model()->data(index).toString();
+
     qDebug() << "Selected:" + str;
 
     QFileInfo myinfo = currentDir.absoluteFilePath(str);
@@ -340,6 +362,9 @@ void MainWindow::on_tableWidget_clicked(const QModelIndex &index)
       //  qint64 size = myinfo.absoluteFilePath().size();//QFileInfo();
         Source_FilePath = myinfo.filePath();
         Source_FileName = myinfo.fileName();
+
+
+
 #if  Debug_Level==Level1
         qDebug() << "It is File";
         qDebug() << "File Name:" + Source_FileName;
@@ -442,11 +467,21 @@ void MainWindow::on_pushButton_4_clicked()
     if(toggle==1)
     {
         ui->pushButton_4->setText("<<-");
+        ui->src_mradioButton->setEnabled(false);
+        ui->src_sradioButton->setEnabled(false);
+        ui->dest_mradioButton->setEnabled(true);
+        ui->dest_sradioButton->setEnabled(true);
         toggle = 0;
     }
     else
     {
         ui->pushButton_4->setText("->>");
+
+        ui->src_mradioButton->setEnabled(true);
+        ui->src_sradioButton->setEnabled(true);
+        ui->dest_mradioButton->setEnabled(false);
+        ui->dest_sradioButton->setEnabled(false);
+
         toggle = 1;
     }
 
@@ -1018,6 +1053,36 @@ void MainWindow::Update_File_Size(const QString &filepath,QLabel *lable)
     lable->setText(QString("%1 %2").arg(s).arg(list.at(i)));
 }
 
+
+
+void MainWindow::on_src_sradioButton_released()
+{
+    if(toggle)
+    {
+        if(ui->src_sradioButton->isChecked())
+        {
+            ui->tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+        }
+        else// if(ui->src_mradioButton->isChecked())
+        {
+            ui->tableWidget->setSelectionMode(QAbstractItemView::MultiSelection);
+        }
+    }
+    else
+    {
+        if(ui->dest_sradioButton->isChecked())
+        {
+            ui->dest_tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+        }
+        else
+        {
+            ui->dest_tableWidget->setSelectionMode(QAbstractItemView::MultiSelection);
+        }
+    }
+    ui->tableWidget->clearSelection();
+    ui->dest_tableWidget->clearSelection();
+}
+
 /*
  *
  *
@@ -1031,3 +1096,5 @@ void MainWindow::on_info_btn_clicked()
                            "\nThankyou.";
     QMessageBox::information(this,"About",information,QMessageBox::Close);
 }
+
+
