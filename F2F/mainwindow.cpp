@@ -117,6 +117,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->dest_mradioButton->setEnabled(false);
     ui->dest_sradioButton->setEnabled(false);
 
+    ui->dest_tableWidget->setSelectionMode(QAbstractItemView::NoSelection);
+//    disconnect(ui->dest_tableWidget,SIGNAL(clicked(QModelIndex)),this,SLOT(on_dest_tableWidget_clicked(QModelIndex)));
+//    disconnect(ui->dest_tableWidget,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(on_dest_tableWidget_doubleClicked(QModelIndex)));
+
   //  ui->dest_tableWidget->setDisabled(true);
   //  ui->dest_tableWidget->clearSelection();
   //  ui->dest_tableWidget->setEnabled(false);
@@ -678,12 +682,32 @@ int MainWindow::FileCopy(QString &src,QString &des)
 void MainWindow::on_pushButton_clicked()
 {
 // Copy from Source to Destication / Destination to Source
-//    qDebug() << " Destination Current Dir:" + dest_Dir.path();
-//    qDebug() << " Source Current Dir:" + currentDir.path();
+// qDebug() << " Destination Current Dir:" + dest_Dir.path();
+// qDebug() << " Source Current Dir:" + currentDir.path();
 
     QString File2Write;
     QString File2Read;
 
+    if(ui->src_mradioButton->isChecked())
+    {
+
+        /*for(int cnt=0;cnt<ui->tableWidget->rowCount();cnt++)
+        {
+            if(ui->tableWidget->itemAt(cnt,0)->isSelected())
+            {
+                //QList   sellist = ui->tableWidget->selectedItems();
+
+            }
+        }*/
+        QList<QTableWidgetItem*>   sellist = ui->tableWidget->selectedItems();
+        for(int i=0;i<sellist.size();i++)
+        {
+            QTableWidgetItem *myitem = sellist.at(i);
+            QString str = myitem->text();
+            qDebug() << QString("List(%1):").arg(i)<<str;
+        }
+        return;
+    }
     if(toggle)
     {
         File2Write = dest_Dir.path() +"/"+Source_FileName;
@@ -705,11 +729,7 @@ void MainWindow::on_pushButton_clicked()
         {
             if(FileCopy(File2Read,File2Write))
             {
-                // File Write Successful.
-                //if(toggle)
-                //    Refresh(dest_Dir.path(),ui->dest_tableWidget,&dest_Dir);
-                // else
-                //     Refresh(currentDir.path(),ui->tableWidget,&currentDir);
+
             }
         }
         else
@@ -1067,9 +1087,16 @@ void MainWindow::on_src_sradioButton_released()
         {
             ui->tableWidget->setSelectionMode(QAbstractItemView::MultiSelection);
         }
+        ui->dest_tableWidget->setSelectionMode(QAbstractItemView::NoSelection);
+//        disconnect(ui->dest_tableWidget,SIGNAL(clicked(QModelIndex)),this,SLOT(on_dest_tableWidget_clicked(QModelIndex)));
+//        disconnect(ui->dest_tableWidget,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(on_dest_tableWidget_doubleClicked(QModelIndex)));
+       // ui->dest_tableWidget->setSelectionBehavior();
     }
     else
     {
+//        connect(ui->dest_tableWidget,SIGNAL(clicked(QModelIndex)),this,SLOT(on_dest_tableWidget_clicked(QModelIndex)));
+//        connect(ui->dest_tableWidget,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(on_dest_tableWidget_doubleClicked(QModelIndex)));
+
         if(ui->dest_sradioButton->isChecked())
         {
             ui->dest_tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -1078,6 +1105,11 @@ void MainWindow::on_src_sradioButton_released()
         {
             ui->dest_tableWidget->setSelectionMode(QAbstractItemView::MultiSelection);
         }
+
+        ui->tableWidget->setSelectionMode(QAbstractItemView::NoSelection);
+//        disconnect(ui->tableWidget,SIGNAL(clicked(QModelIndex)),this,SLOT(on_tableWidget_clicked(QModelIndex)));
+//        disconnect(ui->tableWidget,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(on_tableWidget_doubleClicked(QModelIndex)));
+
     }
     ui->tableWidget->clearSelection();
     ui->dest_tableWidget->clearSelection();
