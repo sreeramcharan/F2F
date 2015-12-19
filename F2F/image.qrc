@@ -4,5 +4,7 @@
         <file>images/Foldericon.png</file>
         <file>images/info_icon.png</file>
         <file>images/Fileicon_ok.png</file>
+        <file>images/Actions-window-close-icon.png</file>
+        <file>images/button_close.png</file>
     </qresource>
 </RCC>

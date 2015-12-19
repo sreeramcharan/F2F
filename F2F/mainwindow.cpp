@@ -8,9 +8,9 @@
  *
 */
 #include <QDebug>
-#include <QFileSystemModel>
-#include <QTreeView>
-#include <QSortFilterProxyModel>
+//#include <QFileSystemModel>
+//#include <QTreeView>
+//#include <QSortFilterProxyModel>
 #include <QMessageBox>
 
 /*
@@ -41,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    QWidget::setWindowFlags(Qt::CustomizeWindowHint);
 
     QString Src_Path = QDir::homePath();
 
@@ -205,118 +206,8 @@ void MainWindow::Refresh(const QString &fPath, QTableWidget *table_widget, QDir 
 #if Debug_Level == Level2
     qDebug("---------------------------------------------------------------");
 #endif
-#if 0
- //   QString fileName = fileComboBox->currentText();
- //   QString text = textComboBox->currentText();
- //   QString fileName = "*";
- //   QString text = "";
-
-  //  currentDir = QDir(path);
-   // QStringList files;
-
-
-   /* if (fileName.isEmpty())
-    {
-         fileName = "*";
-         qDebug() << "File is empty";
-    }*/
-
-  /*  files = currentDir.entryList(QStringList(fileName),
-                                     QDir::Files | QDir::NoSymLinks);
-*/
-   /* if (!text.isEmpty())
-    {
-        //files = findFiles(files, text);
-        qDebug() << "This goes to Find Files";
-    }
-    else
-    {
-        qDebug() << "This goes to show Files";
-    }*/
-
-    qDebug() << "This goes to show Files";
-
-    //   showFiles(files);
-#endif
 }
 
-#if 0
-/*
- *
- *
- *
- *
- *
- */
-void MainWindow::showFiles(const QStringList &files)
-{
-    for (int i = 0; i < files.size(); ++i)
-    {
-
-        QFile file(currentDir.absoluteFilePath(files[i]));
-        qint64 size = QFileInfo(file).size();
-
-        qDebug() << "File : "+ QFileInfo(file).fileName();
-
-        QTableWidgetItem *fileNameItem = new QTableWidgetItem(files[i]);
-        fileNameItem->setFlags(fileNameItem->flags() ^ Qt::ItemIsEditable);
-
-        QTableWidgetItem *sizeItem = new QTableWidgetItem(tr("%1 KB")
-                                             .arg(int((size + 1023) / 1024)));
-
-        sizeItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-        sizeItem->setFlags(sizeItem->flags() ^ Qt::ItemIsEditable);
-
-        int row = ui->tableWidget->rowCount();
-        ui->tableWidget->insertRow(row);
-        ui->tableWidget->setItem(row, 0, fileNameItem);
-        ui->tableWidget->setItem(row, 1, sizeItem);
-    }
-    /*filesFoundLabel->setText(tr("%1 file(s) found").arg(files.size()) +
-                             (" (Double click on a file to open it)"));
-    filesFoundLabel->setWordWrap(true);*/
-}
-
-#endif
-
-#if 0
-/*
- *  This Button is used to update the tableWiget with the files
- *  and the source path is taken from the comboBox.
- *
- *
-*/
-void MainWindow::on_pushButton_9_clicked()
-{
-    qDebug() << "Refresh Button clicked";
-
-    //Refresh(ui->comboBox->currentText(),ui->tableWidget,&currentDir);
-    Refresh(ui->lineEdit_src->displayText(),ui->tableWidget,&currentDir);
-
-   /* QFileInfoList myslist = currentDir.entryList(QDir::AllEntries|QDir::NoDotAndDotDot);
-    for(int i=0;i<myslist.size();i++)
-    {
-
-
-    }*/
- /*
-    QString directory = QFileDialog::getExistingDirectory(this,
-                                    tr("Find Files"), QDir::currentPath());
- */
-}
-#endif
-
-#if 0
-//Not needed.
-QFileSystemModel *fsmodel = new QFileSystemModel(this);
-    fsmodel->setRootPath("/home/");
-
-    //setStyleSheet("* { background-color:rgb(90,20,60);color:rgb(255,255,255); padding: 7px}}");
-    QTreeView *tv = new QTreeView(ui->comboBox);
-    ui->comboBox->setStyleSheet("* { background-color:rgb(225,225,225);color:rgb(255,255,255); padding: 7px}}");
-    ui->comboBox->setView(tv);
-    ui->comboBox->setModel(fsmodel);
-#endif
 
 /*
  *  When an item/row in the TableWiget is clicked using mouse the below
@@ -412,24 +303,6 @@ void MainWindow::on_tableWidget_doubleClicked(const QModelIndex &index)
           ui->foldername_label->setText(myinfo.fileName());
           ui->type_label1->setText("Folder");
           Update_Drive_Size(myinfo.filePath(),ui->Foldersize_label);
-
-#if 0
-       // QSize a = (ui->comboBox->size());
-        for(int i=0;;)
-        {
-            if(ui->comboBox->currentText() != myinfo.absoluteFilePath())
-            {
-                ui->comboBox->setCurrentIndex(i++);
-
-            }
-            else
-            {
-                //Refresh();
-                break;
-            }
-        }
-#endif
-
     }
 }
 #endif
@@ -455,15 +328,6 @@ void MainWindow::on_btn_src_up_clicked()
    ui->type_label1->setText("Folder");
    Update_Drive_Size(fPath,ui->Foldersize_label);
 }
-
-#if 0
-void MainWindow::on_tableWidget_itemClicked(QTableWidgetItem *item)
-{
-    QString str = item->text();
-
-    qDebug() << "item Clicked"+str;
-}
-#endif
 
 bool toggle=1;
 void MainWindow::on_pushButton_4_clicked()
@@ -631,14 +495,6 @@ int MainWindow::FileCopy(QString &src,QString &des)
 
 
     }
-#if 0
-        QMessageBox msgBox;
-        msgBox.setText("The document has been modified.");
-        msgBox.setInformativeText("Do you want to save your changes?");
-        msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-        msgBox.setDefaultButton(QMessageBox::Save);
-        int ret = msgBox.exec();
-#endif
 #else   // Method 2
     if(!in.open(QIODevice::ReadOnly))
     {
@@ -678,8 +534,9 @@ int MainWindow::FileCopy(QString &src,QString &des)
     return status;
 }
 
+QStringList multi_file_list;
 // This is Copy Button
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_copy_btn_clicked()
 {
 // Copy from Source to Destication / Destination to Source
 // qDebug() << " Destination Current Dir:" + dest_Dir.path();
@@ -687,72 +544,97 @@ void MainWindow::on_pushButton_clicked()
 
     QString File2Write;
     QString File2Read;
+    QList<QTableWidgetItem*>   sellist;
 
-    if(ui->src_mradioButton->isChecked())
-    {
-
-        /*for(int cnt=0;cnt<ui->tableWidget->rowCount();cnt++)
-        {
-            if(ui->tableWidget->itemAt(cnt,0)->isSelected())
-            {
-                //QList   sellist = ui->tableWidget->selectedItems();
-
-            }
-        }*/
-        QList<QTableWidgetItem*>   sellist = ui->tableWidget->selectedItems();
-        for(int i=0;i<sellist.size();i++)
-        {
-            QTableWidgetItem *myitem = sellist.at(i);
-            QString str = myitem->text();
-            qDebug() << QString("List(%1):").arg(i)<<str;
-        }
-        return;
-    }
     if(toggle)
     {
-        File2Write = dest_Dir.path() +"/"+Source_FileName;
-        File2Read = Source_FilePath;
+        sellist = ui->tableWidget->selectedItems();
     }
     else
     {
-        File2Read = Dest_FilePath;
-        File2Write =currentDir.path() + "/"+Dest_FileName;
+        sellist = ui->dest_tableWidget->selectedItems();
     }
-
-    qDebug() << "File to Read"+ File2Read;
-    qDebug() << "File To Write:"+File2Write;
-
-    if(File2Read != "")
+    multi_file_list.clear();
+    for(int i=0;i<sellist.size();i++)
     {
-        QFileInfo  file(File2Read);
-        if(file.isFile())
-        {
-            if(FileCopy(File2Read,File2Write))
-            {
+        QTableWidgetItem *myitem = sellist.at(i);
+        QString str = myitem->text();
 
-            }
+        multi_file_list.append(str);
+
+        qDebug() << QString("List(%1):").arg(i)<<str;
+    }
+    int nFiles = multi_file_list.length();
+    if(nFiles>1)
+    {
+        if(toggle)
+        {
+            Copy_Multiple_Files(multi_file_list,currentDir.path(),dest_Dir.path());
         }
         else
         {
-            qDebug() << "Selected Directory";
-            int ret = QMessageBox::information(this,"Information","Directory Selected.\nDo you want to copy all files in the Folder?",QMessageBox::Yes,QMessageBox::No);
-            switch (ret) {
-            case QMessageBox::Yes:
-                        Copy_Directory(File2Read,File2Write);
-                break;
-            case QMessageBox::No:
+            Copy_Multiple_Files(multi_file_list,dest_Dir.path(),currentDir.path());
+        }
 
-                break;
-            default:
-                break;
+    }
+    else if(nFiles==1)
+    {
+        if(toggle)
+        {
+            File2Write = dest_Dir.path() +"/"+multi_file_list.at(0);
+            File2Read = Source_FilePath;
+        }
+        else
+        {
+            File2Read = Dest_FilePath;
+            File2Write =currentDir.path() + "/"+multi_file_list.at(0);
+        }
+
+        qDebug() << "File to Read"+ File2Read;
+        qDebug() << "File To Write:"+File2Write;
+
+        if(File2Read != "")
+        {
+            QFileInfo  file(File2Read);
+            if(file.isFile())
+            {
+                if(FileCopy(File2Read,File2Write))
+                {
+
+                }
+            }
+            else
+            {
+                qDebug() << "Selected Directory";
+                int ret = QMessageBox::information(this,"Information","Directory Selected.\nDo you want to copy all files in the Folder?",QMessageBox::Yes,QMessageBox::No);
+                switch (ret) {
+                case QMessageBox::Yes:
+                            Copy_Directory(File2Read,File2Write);
+                    break;
+                case QMessageBox::No:
+
+                    break;
+                default:
+                    break;
+                }
             }
         }
     }
+    else
+    {
+        // No File Selected.
+    }
     //Write Successful.
     if(toggle)
+    {
         Refresh(dest_Dir.path(),ui->dest_tableWidget,&dest_Dir);
+        update_properties(toggle,Dest_FilePath);
+    }
     else
+    {
         Refresh(currentDir.path(),ui->tableWidget,&currentDir);
+        update_properties(toggle,Source_FilePath);
+    }
 
     Dest_FilePath = "";
     Source_FilePath = "";
@@ -764,7 +646,7 @@ void MainWindow::on_pushButton_clicked()
 /*
 *
 *
-*
+*  To Do
 */
 void MainWindow::on_btn_move_clicked()
 {
@@ -851,92 +733,120 @@ void MainWindow::on_btn_move_clicked()
  *
  *
  *
- *
+ * To Do
 */
 void MainWindow::on_btn_delete_clicked()
 {
     QString File2Del="",FilePath="";
 
+    QList<QTableWidgetItem*>   sellist;
     if(toggle)
     {
-        //File2Write = dest_Dir.path() +"/"+Source_FileName;
-        File2Del = Source_FileName;
-        FilePath = currentDir.path();
+        sellist = ui->tableWidget->selectedItems();
     }
     else
     {
-        File2Del = Dest_FileName;
-        FilePath = dest_Dir.path();
-        //File2Write =currentDir.path() + "/"+Dest_FileName;
+        sellist = ui->dest_tableWidget->selectedItems();
     }
-
-    if(File2Del != "")
+    multi_file_list.clear();
+    for(int i=0;i<sellist.size();i++)
     {
-        QFileInfo file(QString(FilePath+"/"+File2Del));
+        QTableWidgetItem *myitem = sellist.at(i);
+        QString str = myitem->text();
 
-        if(file.isDir())
+        multi_file_list.append(str);
+
+        qDebug() << QString("List(%1):").arg(i)<<str;
+    }
+    int nFiles = multi_file_list.length();
+
+    if(nFiles>1)    // Multiple Files.
+    {
+
+    }
+    else if(nFiles==1)
+    {
+        if(toggle)
         {
-         int ret =  QMessageBox::warning(this,"Delete Folder","Do you want to delete folder and files inside?",QMessageBox::Yes,QMessageBox::No);
+            //File2Write = dest_Dir.path() +"/"+Source_FileName;
+            File2Del = multi_file_list.at(0);
+            FilePath = currentDir.path();
+        }
+        else
+        {
+            File2Del = multi_file_list.at(0);
+            FilePath = dest_Dir.path();
+            //File2Write =currentDir.path() + "/"+Dest_FileName;
+        }
 
-            switch(ret)
+        if(File2Del != "")
+        {
+            QFileInfo file(QString(FilePath+"/"+File2Del));
+
+            if(file.isDir())
             {
-            case QMessageBox::Yes:
-            #if 0
-            // This function created a big problem.
-               // Del_Directory(FilePath);
-            #endif
-    // Need to add here
-                break;
+             int ret =  QMessageBox::warning(this,"Delete Folder","Do you want to delete folder and files inside?",QMessageBox::Yes,QMessageBox::No);
 
-            case QMessageBox::No:
+                switch(ret)
+                {
+                case QMessageBox::Yes:
+                #if 1
+                    //if(file.path() == )
+                   // Del_Directory(FilePath);
+                   // This function created a big problem.
+                #endif
+        // Need to add here
+                    break;
 
-                break;
+                case QMessageBox::No:
 
-            default:break;
+                    break;
+
+                default:break;
+                }
+            }
+            else if(file.isFile())
+            {
+                QDateTime   created = file.created();
+                QString created_date = created.toString();
+                QString modi_date = QDateTime(file.lastModified()).toString();
+                int si = file.size();
+
+                QString Fdetails = QString("Do you want to delete File?\nFile Name: %1\n"
+                                           "File Size: %2 Bytes\n"
+                                           "File Created: %3\n").arg(File2Del).arg(si).arg(created_date).arg(modi_date);
+
+                int ret =  QMessageBox::warning(this,"Delete File",Fdetails,QMessageBox::Yes,QMessageBox::No);
+
+                   switch(ret)
+                   {
+                   case QMessageBox::Yes:
+
+                    if(QDir(FilePath).remove(File2Del))
+                    {
+                        update_status("File Deleted");
+                    }
+                    else
+                    {
+                        update_status("File Not Deleted");
+                    }
+                   break;
+
+                   case QMessageBox::No:
+
+                       break;
+
+                   default:break;
+                   }
+
             }
         }
-        else if(file.isFile())
-        {
-            int ret =  QMessageBox::warning(this,"Delete File",QString("Do you want to delete File?\nFileName:%1").arg(File2Del),QMessageBox::Yes,QMessageBox::No);
-
-               switch(ret)
-               {
-               case QMessageBox::Yes:
-    #if 0
-               {
-                   QDir deldir(FilePath);
-                   if(deldir.remove(File2Del))
-                   {
-                       qDebug("Deleted");
-                   }
-                   else
-                   {
-                       qDebug("Not Deleted");
-                   }
-                        //
-               }
-    #else
-                if(QDir(FilePath).remove(File2Del))
-                {
-                    update_status("File Deleted");
-                }
-                else
-                {
-                    update_status("File Not Deleted");
-                }
-
-    #endif
-                   break;
-
-               case QMessageBox::No:
-
-                   break;
-
-               default:break;
-               }
-
-        }
     }
+    else
+    {
+
+    }
+
     // Refresh the Deleted table
     if(!toggle)
         Refresh(dest_Dir.path(),ui->dest_tableWidget,&dest_Dir);
@@ -964,6 +874,11 @@ void MainWindow::update_properties(bool UI,QString filename)
     QString FileName = info.fileName();
     bool type = info.isDir();
 
+    if(FileName.length()>15)
+    {
+        FileName.chop(14);
+        FileName.append("~");
+    }
     if(UI==0)
     {
         ui->foldername_label->setText(FileName);
@@ -1074,7 +989,6 @@ void MainWindow::Update_File_Size(const QString &filepath,QLabel *lable)
 }
 
 
-
 void MainWindow::on_src_sradioButton_released()
 {
     if(toggle)
@@ -1115,18 +1029,19 @@ void MainWindow::on_src_sradioButton_released()
     ui->dest_tableWidget->clearSelection();
 }
 
-/*
- *
- *
- *
-*/
+/*  */
 void MainWindow::on_info_btn_clicked()
 {
     QString  information = "This is a file copy software.\n\n"
                            "Author  : _______________\n"
                            "Version : 0.1\n"
-                           "\nThankyou.";
+                           "\nThankyou.\n";
     QMessageBox::information(this,"About",information,QMessageBox::Close);
 }
 
 
+/*  */
+void MainWindow::on_info_btn_2_clicked()
+{
+    exit(EXIT_SUCCESS);
+}

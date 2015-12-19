@@ -1,0 +1,171 @@
+This File containg all the unsed or the unwanted code that is removed from the application code.
+
+#if 0
+//   QString fileName = fileComboBox->currentText();
+//   QString text = textComboBox->currentText();
+//   QString fileName = "*";
+//   QString text = "";
+
+//  currentDir = QDir(path);
+// QStringList files;
+
+
+/* if (fileName.isEmpty())
+{
+fileName = "*";
+qDebug() << "File is empty";
+}*/
+
+/*  files = currentDir.entryList(QStringList(fileName),
+                     QDir::Files | QDir::NoSymLinks);
+*/
+/* if (!text.isEmpty())
+{
+//files = findFiles(files, text);
+qDebug() << "This goes to Find Files";
+}
+else
+{
+qDebug() << "This goes to show Files";
+}*/
+
+qDebug() << "This goes to show Files";
+
+//   showFiles(files);
+#endif
+
+#if 0
+/*
+*
+*
+*
+*
+*
+*/
+void MainWindow::showFiles(const QStringList &files)
+{
+for (int i = 0; i < files.size(); ++i)
+{
+
+QFile file(currentDir.absoluteFilePath(files[i]));
+qint64 size = QFileInfo(file).size();
+
+qDebug() << "File : "+ QFileInfo(file).fileName();
+
+QTableWidgetItem *fileNameItem = new QTableWidgetItem(files[i]);
+fileNameItem->setFlags(fileNameItem->flags() ^ Qt::ItemIsEditable);
+
+QTableWidgetItem *sizeItem = new QTableWidgetItem(tr("%1 KB")
+                             .arg(int((size + 1023) / 1024)));
+
+sizeItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+sizeItem->setFlags(sizeItem->flags() ^ Qt::ItemIsEditable);
+
+int row = ui->tableWidget->rowCount();
+ui->tableWidget->insertRow(row);
+ui->tableWidget->setItem(row, 0, fileNameItem);
+ui->tableWidget->setItem(row, 1, sizeItem);
+}
+/*filesFoundLabel->setText(tr("%1 file(s) found").arg(files.size()) +
+             (" (Double click on a file to open it)"));
+filesFoundLabel->setWordWrap(true);*/
+}
+
+#endif
+
+#if 0
+/*
+*  This Button is used to update the tableWiget with the files
+*  and the source path is taken from the comboBox.
+*
+*
+*/
+void MainWindow::on_pushButton_9_clicked()
+{
+qDebug() << "Refresh Button clicked";
+
+//Refresh(ui->comboBox->currentText(),ui->tableWidget,&currentDir);
+Refresh(ui->lineEdit_src->displayText(),ui->tableWidget,&currentDir);
+
+/* QFileInfoList myslist = currentDir.entryList(QDir::AllEntries|QDir::NoDotAndDotDot);
+for(int i=0;i<myslist.size();i++)
+{
+
+
+}*/
+/*
+QString directory = QFileDialog::getExistingDirectory(this,
+                    tr("Find Files"), QDir::currentPath());
+*/
+}
+#endif
+
+#if 0
+//Not needed.
+QFileSystemModel *fsmodel = new QFileSystemModel(this);
+fsmodel->setRootPath("/home/");
+
+//setStyleSheet("* { background-color:rgb(90,20,60);color:rgb(255,255,255); padding: 7px}}");
+QTreeView *tv = new QTreeView(ui->comboBox);
+ui->comboBox->setStyleSheet("* { background-color:rgb(225,225,225);color:rgb(255,255,255); padding: 7px}}");
+ui->comboBox->setView(tv);
+ui->comboBox->setModel(fsmodel);
+#endif
+
+#if 0
+// QSize a = (ui->comboBox->size());
+for(int i=0;;)
+{
+if(ui->comboBox->currentText() != myinfo.absoluteFilePath())
+{
+ui->comboBox->setCurrentIndex(i++);
+
+}
+else
+{
+//Refresh();
+break;
+}
+}
+#endif
+
+#if 0
+void MainWindow::on_tableWidget_itemClicked(QTableWidgetItem *item)
+{
+QString str = item->text();
+
+qDebug() << "item Clicked"+str;
+}
+#endif
+
+#if 0
+QMessageBox msgBox;
+msgBox.setText("The document has been modified.");
+msgBox.setInformativeText("Do you want to save your changes?");
+msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+msgBox.setDefaultButton(QMessageBox::Save);
+int ret = msgBox.exec();
+#endif
+
+/*for(int cnt=0;cnt<ui->tableWidget->rowCount();cnt++)
+{
+if(ui->tableWidget->itemAt(cnt,0)->isSelected())
+{
+//QList   sellist = ui->tableWidget->selectedItems();
+
+}
+}*/
+
+
+   {
+       QDir deldir(FilePath);
+       if(deldir.remove(File2Del))
+       {
+           qDebug("Deleted");
+       }
+       else
+       {
+           qDebug("Not Deleted");
+       }
+            //
+   }

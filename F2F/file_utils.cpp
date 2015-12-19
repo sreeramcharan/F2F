@@ -46,7 +46,80 @@ qint64  Direc_Size(const QString &filepath)
    return sizex;
 }
 
+/*
+ *
+ *
+ *
+ */
+qint64  Size_Folder_File(const QString &filepath)
+{
+   qint64   sizex = 0;
+   QFileInfo  strinfo(filepath);
 
+   if(strinfo.isDir())
+   {
+        QDir    folder(filepath);
+        QFileInfoList   fileslist = folder.entryInfoList(QDir::NoDotAndDotDot|QDir::NoSymLinks|QDir::AllDirs|QDir::Files|QDir::Hidden);
+        for(int i=0;i<fileslist.size();i++)
+        {
+            QFileInfo   info = fileslist.at(i);
+
+            if(info.isDir())
+            {
+                //qDebug() << "Dir Found:" + info.fileName();
+                sizex += Size_Folder_File(info.absoluteFilePath());
+            }
+            else
+            {
+                sizex += info.size();
+            }
+        }
+   }
+   else if(strinfo.isFile())
+   {
+       sizex += QFileInfo(filepath).size();
+   }
+
+   return sizex;
+}
+/*
+ *
+ *
+ *
+ *
+ *
+*/
+qint64  Direc_Items(const QString &filepath)
+{
+   qint64   total_items = 0;
+   QFileInfo  strinfo(filepath);
+
+   if(strinfo.isDir())
+   {
+        QDir    folder(filepath);
+        QFileInfoList   fileslist = folder.entryInfoList(QDir::NoDotAndDotDot|QDir::NoSymLinks|QDir::AllDirs|QDir::Files|QDir::Hidden);
+        for(int i=0;i<fileslist.size();i++)
+        {
+            QFileInfo   info = fileslist.at(i);
+
+            if(info.isDir())
+            {
+                //qDebug() << "Dir Found:" + info.fileName();
+                total_items += Direc_Items(info.absoluteFilePath());
+            }
+            else
+            {
+                total_items += 1;//info.size();
+            }
+        }
+   }
+   else if(strinfo.isFile())
+   {
+       total_items += 1;
+   }
+
+   return total_items;
+}
 /*
  *
  *
@@ -195,3 +268,27 @@ bool  Del_Directory(const QString &srcfilepath)
    return 0;
 }
 
+/*
+ *
+ *
+ *
+ */
+bool Copy_Multiple_Files(const QStringList &flist,const QString &srcpath,const QString &despath)
+{
+    for(int i=0;i<flist.size();i++)
+    {
+        QString  File2Read = srcpath    +"/" +  flist.at(i);
+        QString File2Write = despath    +"/" +  flist.at(i);
+
+        QFileInfo   finfo = File2Read;
+        if(finfo.isDir())
+        {
+            Copy_Directory(File2Read,File2Write);
+        }
+        else if(finfo.isFile())
+        {
+            QFile::copy(File2Read,File2Write);
+        }
+    }
+    return 1;
+}

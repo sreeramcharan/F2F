@@ -29,11 +29,13 @@ private slots:
     void on_btn_src_up_2_clicked();
     void on_dest_tableWidget_clicked(const QModelIndex &index);
     void on_dest_tableWidget_doubleClicked(const QModelIndex &index);
-    void on_pushButton_clicked();
+    void on_copy_btn_clicked();
     void on_btn_move_clicked();
     void on_btn_delete_clicked();
     void on_info_btn_clicked();
     void on_src_sradioButton_released();
+
+    void on_info_btn_2_clicked();
 
 private:
     Ui::MainWindow *ui;
