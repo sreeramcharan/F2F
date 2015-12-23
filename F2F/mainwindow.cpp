@@ -118,7 +118,15 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->dest_mradioButton->setEnabled(false);
     ui->dest_sradioButton->setEnabled(false);
 
+    /*Tested and working...*/
+    /*Need to implement compleely*/
+    //unsigned int count=0;
+    //qint64 size=0;
+    //Size_Folder_File(QString(Src_Path+"/Qt_Repo"),&count,&size);//+"/Folder2Copy/"
+
     ui->dest_tableWidget->setSelectionMode(QAbstractItemView::NoSelection);
+    ui->tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+
 //    disconnect(ui->dest_tableWidget,SIGNAL(clicked(QModelIndex)),this,SLOT(on_dest_tableWidget_clicked(QModelIndex)));
 //    disconnect(ui->dest_tableWidget,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(on_dest_tableWidget_doubleClicked(QModelIndex)));
 
@@ -781,18 +789,23 @@ void MainWindow::on_btn_delete_clicked()
 
         if(File2Del != "")
         {
-            QFileInfo file(QString(FilePath+"/"+File2Del));
+            QString Del_path = FilePath+"/"+File2Del;
+            QFileInfo file(Del_path);
 
             if(file.isDir())
             {
-             int ret =  QMessageBox::warning(this,"Delete Folder","Do you want to delete folder and files inside?",QMessageBox::Yes,QMessageBox::No);
+                QString Folder_details = QString("Do you want to delete folder and files inside?\n"
+                                                 "Folder Name: %1\n"
+                                                 "Folder Size: %2 Bytes\n").arg(file.fileName()).arg(Direc_Size(Del_path));
+
+                int ret =  QMessageBox::warning(this,"Delete Folder",Folder_details,QMessageBox::Yes,QMessageBox::No);
 
                 switch(ret)
                 {
                 case QMessageBox::Yes:
                 #if 1
                     //if(file.path() == )
-                   // Del_Directory(FilePath);
+                    // Del_Directory(Del_path);
                    // This function created a big problem.
                 #endif
         // Need to add here

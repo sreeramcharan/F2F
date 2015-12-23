@@ -51,15 +51,13 @@ qint64  Direc_Size(const QString &filepath)
  *
  *
  */
-qint64  Size_Folder_File(const QString &filepath)
+void  Size_Folder_File(const QString &filepath, unsigned int *filecnt, qint64 *fol_size)
 {
-   qint64   sizex = 0;
    QFileInfo  strinfo(filepath);
-
    if(strinfo.isDir())
    {
         QDir    folder(filepath);
-        QFileInfoList   fileslist = folder.entryInfoList(QDir::NoDotAndDotDot|QDir::NoSymLinks|QDir::AllDirs|QDir::Files|QDir::Hidden);
+        QFileInfoList   fileslist = folder.entryInfoList(QDir::NoDotAndDotDot|QDir::AllDirs|QDir::Files|QDir::NoSymLinks);//QDir::Dirs|QDir::Files);
         for(int i=0;i<fileslist.size();i++)
         {
             QFileInfo   info = fileslist.at(i);
@@ -67,20 +65,24 @@ qint64  Size_Folder_File(const QString &filepath)
             if(info.isDir())
             {
                 //qDebug() << "Dir Found:" + info.fileName();
-                sizex += Size_Folder_File(info.absoluteFilePath());
+                (*filecnt)++;
+                Size_Folder_File(info.absoluteFilePath(),filecnt,fol_size);
             }
-            else
+            else if(info.isFile())
             {
-                sizex += info.size();
+                QString name = info.fileName();
+                if(name.endsWith('~'))
+                {
+
+                }
+                else
+                {
+                    (*fol_size) += info.size();
+                    (*filecnt)++;
+                }
             }
         }
    }
-   else if(strinfo.isFile())
-   {
-       sizex += QFileInfo(filepath).size();
-   }
-
-   return sizex;
 }
 /*
  *
@@ -136,10 +138,10 @@ bool  Copy_Directory(const QString &srcfilepath,const QString &destfilepath)
 
    if(!destinfo.exists())
    {
-       qDebug()<<"Directory Does not exist:"+destinfo.fileName();
+       //qDebug()<<"Directory Does not exist:"+destinfo.fileName();
        QDir     dir(destinfo.absolutePath());
        dir.mkdir(destinfo.filePath());
-       qDebug()<<"Hope its done";
+       //qDebug()<<"Hope its done";
    }
 
    if(strinfo.isDir())
@@ -161,9 +163,9 @@ bool  Copy_Directory(const QString &srcfilepath,const QString &destfilepath)
             else
             {
                 sizex += info.size();
-                qDebug() << "Copying from:"+info.filePath();
+                //qDebug() << "Copying from:"+info.filePath();
                 QString dname = QString(destinfo.absoluteFilePath()+QDir::separator()+info.fileName());
-                qDebug() << "Copying to:" + dname;
+                //qDebug() << "Copying to:" + dname;
                 if(QFile::exists(dname))
                 {
                     qDebug() << "File Already exists";
@@ -172,12 +174,13 @@ bool  Copy_Directory(const QString &srcfilepath,const QString &destfilepath)
                         qDebug("File removed");
                     }
                 }
-                QFile::copy(info.filePath(),dname);
+                if(!QFile::copy(info.filePath(),dname))
+                    return true;
             }
         }
    }
 
-   return 0;//sizex;
+   return true;//sizex;
 }
 
 /*
@@ -246,27 +249,35 @@ bool  Move_Directory(const QString &srcfilepath,const QString &destfilepath)
 */
 bool  Del_Directory(const QString &srcfilepath)
 {
+  QDir  dir(srcfilepath);
+  if(!dir.exists())
+      return true;
+
   QFileInfo  strinfo(srcfilepath);
   if(strinfo.isDir())
    {
         QDir    folder(srcfilepath);
-        QFileInfoList   fileslist = folder.entryInfoList(QDir::NoDotAndDotDot|QDir::NoSymLinks|QDir::AllDirs|QDir::Files|QDir::Hidden);
+        QFileInfoList   fileslist = folder.entryInfoList(QDir::NoDotAndDotDot|QDir::AllDirs|QDir::Files|QDir::Hidden);
         for(int i=0;i<fileslist.size();i++)
         {
             QFileInfo   info = fileslist.at(i);
             if(info.isDir())
             {
-                Del_Directory(info.absoluteFilePath());
-                folder.rmdir(info.fileName());
+                if(!Del_Directory(info.filePath()))
+                    return false;
             }
             else
             {
-                QFile::remove(info.filePath());
+                if(!QFile::remove(info.filePath()))
+                    return false;
             }
         }
    }
-   return 0;
+
+  QDir parentDir(QFileInfo(srcfilepath).path());
+  return parentDir.rmdir(QFileInfo(srcfilepath).fileName());
 }
+
 
 /*
  *
@@ -287,8 +298,9 @@ bool Copy_Multiple_Files(const QStringList &flist,const QString &srcpath,const Q
         }
         else if(finfo.isFile())
         {
-            QFile::copy(File2Read,File2Write);
+            if(!QFile::copy(File2Read,File2Write))
+                return false;
         }
     }
-    return 1;
+    return true;
 }
